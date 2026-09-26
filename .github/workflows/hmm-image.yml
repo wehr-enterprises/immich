@@ -1,0 +1,126 @@
+name: White Knights image
+
+# Checks the forked web UI and publishes ghcr.io/<owner>/immich-server:<immich version>-hmm.<run>,
+# i.e. the stock immich-server image with this fork's web build (see hmm/Dockerfile).
+# Deploy by setting that tag as `image:` for immich-server in /opt/immich/docker-compose.override.yml.
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [hmm165]
+    paths:
+      - 'web/**'
+      - 'i18n/**'
+      - 'packages/sdk/**'
+      - 'hmm/**'
+      - 'pnpm-lock.yaml'
+      - '.github/workflows/hmm-image.yml'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions: {}
+
+jobs:
+  check-web:
+    name: Check web
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86 # v6.0.10
+
+      - name: Setup Node
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version-file: '.nvmrc'
+          cache: 'pnpm'
+          cache-dependency-path: '**/pnpm-lock.yaml'
+
+      - name: Build @immich/sdk
+        run: pnpm --filter @immich/sdk install --frozen-lockfile && pnpm --filter @immich/sdk build
+
+      - name: Install web
+        run: pnpm --filter immich-web install --frozen-lockfile && pnpm exec svelte-kit sync
+        working-directory: ./web
+
+      - name: Format
+        run: pnpm run format
+        working-directory: ./web
+
+      - name: Lint
+        run: pnpm run lint
+        working-directory: ./web
+        if: ${{ !cancelled() }}
+
+      - name: Type check
+        run: pnpm run check:typescript && pnpm run check:svelte
+        working-directory: ./web
+        if: ${{ !cancelled() }}
+
+      - name: Unit tests
+        run: pnpm run test --run
+        working-directory: ./web
+        if: ${{ !cancelled() }}
+
+  image:
+    name: Build and push image
+    needs: check-web
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Work out tags
+        id: meta
+        env:
+          OWNER: ${{ github.repository_owner }}
+          RUN_NUMBER: ${{ github.run_number }}
+        run: |
+          version="v$(jq -r .version web/package.json)"
+          image="ghcr.io/${OWNER,,}/immich-server"
+          {
+            echo "immich-version=${version}"
+            echo "image=${image}:${version}-hmm.${RUN_NUMBER}"
+            echo "tags=${image}:${version}-hmm.${RUN_NUMBER},${image}:hmm165"
+          } | tee -a "$GITHUB_OUTPUT"
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@37fe631027851001ddb9b187196cc803df7f5f0e # v4.3.0
+
+      - name: Log in to GHCR
+        uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4.6.0
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push
+        uses: docker/build-push-action@53b7df96c91f9c12dcc8a07bcb9ccacbed38856a # v7.3.0
+        with:
+          context: .
+          file: hmm/Dockerfile
+          platforms: linux/amd64
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          build-args: |
+            IMMICH_VERSION=${{ steps.meta.outputs.immich-version }}
+            BUILD_ID=${{ github.run_id }}
+            BUILD_IMAGE=${{ steps.meta.outputs.image }}
+            BUILD_SOURCE_REF=${{ github.ref_name }}
+            BUILD_SOURCE_COMMIT=${{ github.sha }}
+            REPOSITORY=${{ github.repository }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max

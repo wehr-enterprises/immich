@@ -1,0 +1,56 @@
+/*
+ * White Knights look: navy primary in light mode, patch gold in dark mode, Oswald for display
+ * headings. Imported at the end of src/app.css. The rules are deliberately *outside* any
+ * @layer so they win over @immich/ui's `@layer base` theme and app.css's own defaults.
+ * Colors match the White Knights WordPress themes (wk-feed / wk-hub / wk-wall).
+ */
+
+@font-face {
+  font-family: 'Oswald';
+  src: url('$lib/hmm/fonts/Oswald-latin-wght.woff2') format('woff2-variations');
+  font-weight: 200 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@theme {
+  --font-display: 'Oswald', Impact, 'Arial Narrow', sans-serif;
+  --color-hmm-navy: #1b4a7a;
+  --color-hmm-navy-dark: #14283e;
+  --color-hmm-gold: #e0a500;
+}
+
+:root,
+.light {
+  /* navy #1b4a7a, oklch(0.403 0.096 251.8) */
+  --immich-ui-primary-50: oklch(0.97 0.012 252);
+  --immich-ui-primary-100: oklch(0.93 0.025 252);
+  --immich-ui-primary-200: oklch(0.86 0.045 252);
+  --immich-ui-primary-300: oklch(0.75 0.07 252);
+  --immich-ui-primary-400: oklch(0.58 0.095 252);
+  --immich-ui-primary-500: #1b4a7a;
+  --immich-ui-primary-600: oklch(0.36 0.088 252);
+  --immich-ui-primary-700: oklch(0.31 0.075 252);
+  --immich-ui-primary-800: oklch(0.265 0.06 252);
+  --immich-ui-primary-900: oklch(0.215 0.048 252);
+  --immich-ui-primary-950: oklch(0.16 0.035 252);
+
+  /* legacy Tailwind colors used by older Immich components (rgb triplets) */
+  --immich-primary: 27 74 122;
+  --immich-dark-primary: 224 165 0;
+}
+
+.dark {
+  /* gold #e0a500, oklch(0.757 0.156 82.7); @immich/ui's dark scale runs light (950) to dark (50) */
+  --immich-ui-primary-950: oklch(0.985 0.015 83);
+  --immich-ui-primary-900: oklch(0.965 0.035 83);
+  --immich-ui-primary-800: oklch(0.93 0.07 83);
+  --immich-ui-primary-700: oklch(0.89 0.11 83);
+  --immich-ui-primary-600: oklch(0.83 0.14 83);
+  --immich-ui-primary-500: #e0a500;
+  --immich-ui-primary-400: oklch(0.56 0.11 83);
+  --immich-ui-primary-300: oklch(0.47 0.09 83);
+  --immich-ui-primary-200: oklch(0.38 0.07 83);
+  --immich-ui-primary-100: oklch(0.27 0.045 83);
+  --immich-ui-primary-50: oklch(0.205 0.03 83);
+}

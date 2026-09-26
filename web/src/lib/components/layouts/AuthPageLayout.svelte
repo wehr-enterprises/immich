@@ -1,5 +1,6 @@
 <script lang="ts">
-  import { Card, CardBody, CardHeader, Heading, immichLogo, Logo, VStack } from '@immich/ui';
+  import { hmmCrest } from '$lib/hmm/branding';
+  import { Card, CardBody, CardHeader, Heading, Logo, VStack } from '@immich/ui';
   import type { Snippet } from 'svelte';
   interface Props {
     title?: string;
@@ -14,11 +15,7 @@
 <section class="relative isolate flex min-h-dvh min-w-dvw items-center justify-center">
   {#if withBackdrop}
     <div class="absolute -z-10 flex size-full place-content-center place-items-center">
-      <img
-        src={immichLogo}
-        class="mx-auto mb-2 h-full max-w-(--breakpoint-md) overflow-hidden antialiased"
-        alt="Immich logo"
-      />
+      <img src={hmmCrest} class="mx-auto mb-2 h-full max-w-(--breakpoint-md) overflow-hidden antialiased" alt="" />
       <div
         class="absolute inset-s-0 top-0 h-[99%] w-full bg-transparent backdrop-blur-[200px] dark:bg-immich-dark-bg/20"
       ></div>

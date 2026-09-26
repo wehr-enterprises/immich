@@ -1,4 +1,5 @@
 <script lang="ts">
+  import HmmLanding from '$lib/hmm/HmmLanding.svelte';
   import AuthPageLayout from '$lib/components/layouts/AuthPageLayout.svelte';
   import { Route } from '$lib/route';
   import { websocketStore } from '$lib/stores/websocket';
@@ -6,6 +7,9 @@
   import { startDatabaseRestoreFlow } from '@immich/sdk';
   import { Button, Heading, Stack } from '@immich/ui';
   import { t } from 'svelte-i18n';
+  import type { PageData } from './$types';
+
+  let { data }: { data: PageData } = $props();
 
   async function switchToMaintenance() {
     try {
@@ -20,16 +24,20 @@
   }
 </script>
 
-<AuthPageLayout>
-  <div class="flex flex-col place-items-center gap-12 text-center">
-    <Heading size="large" color="primary" tag="h1">{$t('welcome_to_immich')}</Heading>
-    <Stack>
-      <Button href={Route.register()} size="large" shape="round">
-        <span class="px-2 font-semibold">{$t('getting_started')}</span>
-      </Button>
-      <Button size="small" shape="round" variant="ghost" onclick={switchToMaintenance}>
-        <span class="px-2 font-semibold">{$t('maintenance_restore_from_backup')}</span>
-      </Button>
-    </Stack>
-  </div>
-</AuthPageLayout>
+{#if data.landing}
+  <HmmLanding />
+{:else}
+  <AuthPageLayout>
+    <div class="flex flex-col place-items-center gap-12 text-center">
+      <Heading size="large" color="primary" tag="h1">{$t('welcome_to_immich')}</Heading>
+      <Stack>
+        <Button href={Route.register()} size="large" shape="round">
+          <span class="px-2 font-semibold">{$t('getting_started')}</span>
+        </Button>
+        <Button size="small" shape="round" variant="ghost" onclick={switchToMaintenance}>
+          <span class="px-2 font-semibold">{$t('maintenance_restore_from_backup')}</span>
+        </Button>
+      </Stack>
+    </div>
+  </AuthPageLayout>
+{/if}

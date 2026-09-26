@@ -1,6 +1,6 @@
 {
   "background_color": "#ffffff",
-  "description": "Self-hosted photo and video backup solution directly from your mobile phone.",
+  "description": "HMM-165 White Knights squadron photos and member site.",
   "dir": "auto",
   "display": "standalone",
   "icons": [
@@ -24,9 +24,13 @@
     }
   ],
   "lang": "en",
-  "name": "Immich",
-  "short_name": "Immich",
+  "name": "White Knights",
+  "short_name": "White Knights",
   "shortcuts": [
+    {
+      "name": "Home",
+      "url": "/hub/home"
+    },
     {
       "name": "Photos",
       "url": "/photos"
@@ -40,5 +44,6 @@
       "url": "/map"
     }
   ],
-  "start_url": "/"
+  "start_url": "/hub/home",
+  "theme_color": "#1b4a7a"
 }

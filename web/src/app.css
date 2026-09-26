@@ -1,5 +1,7 @@
 @import 'tailwindcss';
 @import '@immich/ui/theme/default.css';
+/* HMM-165: White Knights look (must stay after the Immich theme) */
+@import './lib/hmm/theme.css';
 
 @source "../node_modules/@immich/ui";
 /* @import '../../../ui/packages/ui/dist/theme/default.css'; */

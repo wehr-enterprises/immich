@@ -2,6 +2,7 @@
   import BottomInfo from '$lib/components/shared-components/side-bar/BottomInfo.svelte';
   import RecentAlbums from '$lib/components/shared-components/side-bar/RecentAlbums.svelte';
   import Sidebar from '$lib/components/sidebar/Sidebar.svelte';
+  import HmmSidebarLinks from '$lib/hmm/HmmSidebarLinks.svelte';
   import { authManager } from '$lib/managers/auth-manager.svelte';
   import { featureFlagsManager } from '$lib/managers/feature-flags-manager.svelte';
   import { Route } from '$lib/route';
@@ -40,6 +41,8 @@
 </script>
 
 <Sidebar ariaLabel={$t('primary')}>
+  <HmmSidebarLinks />
+
   <NavbarItem title={$t('photos')} href={Route.photos()} icon={mdiImageMultipleOutline} activeIcon={mdiImageMultiple} />
 
   {#if featureFlagsManager.value.search}

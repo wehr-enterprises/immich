@@ -1,4 +1,5 @@
 import { redirect } from '@sveltejs/kit';
+import { HmmRoute } from '$lib/hmm/branding';
 import { authManager } from '$lib/managers/auth-manager.svelte';
 import { serverConfigManager } from '$lib/managers/server-config-manager.svelte';
 import { Route } from '$lib/route';
@@ -19,12 +20,13 @@ export const load = (async ({ fetch }) => {
 
     await authManager.load();
     if (authManager.authenticated) {
-      redirect(307, Route.photos());
+      // HMM-165: members start on the White Knights home page
+      redirect(307, HmmRoute.home());
     }
 
     if (serverConfigManager.value.isInitialized) {
-      // Redirect to login page if there exists an admin account (i.e. server is initialized)
-      redirect(307, Route.login());
+      // HMM-165: visitors get the White Knights welcome page (it links to the login page)
+      return { landing: true, meta: { title: 'Welcome', description: 'HMM-165 White Knights squadron photos' } };
     }
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -37,6 +39,7 @@ export const load = (async ({ fetch }) => {
   const $t = await getFormatter();
 
   return {
+    landing: false,
     meta: {
       title: $t('welcome') + ' 🎉',
       description: $t('immich_web_interface'),
