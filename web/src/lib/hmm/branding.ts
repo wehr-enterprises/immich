@@ -13,6 +13,7 @@ export const SOURCE_URL = 'https://github.com/wehr-enterprises/immich/tree/hmm16
 export const HmmRoute = {
   home: () => '/hub/home',
   adminAnnouncements: () => '/hub/admin/announcements',
+  adminChat: () => '/hub/admin/chat',
 };
 
 export const hmmLogos: LogoSet = {

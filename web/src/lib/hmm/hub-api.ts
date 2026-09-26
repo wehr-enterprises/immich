@@ -1,3 +1,5 @@
+import type { UserAvatarColor } from '@immich/sdk';
+
 /**
  * Client for the White Knights hub (hmm165-hub), served on this same origin under /hub/api.
  * The browser sends Immich's session cookie automatically; the hub checks it with Immich.
@@ -90,3 +92,66 @@ export const updateAnnouncement = (id: number, input: AnnouncementInput) =>
   hubFetch<AdminAnnouncement>(`/announcements/${id}`, { method: 'PUT', body: JSON.stringify(input) });
 
 export const deleteAnnouncement = (id: number) => hubFetch<void>(`/announcements/${id}`, { method: 'DELETE' });
+
+// Chat (phase 3)
+
+export interface ChatMessage {
+  id: number;
+  userId: string;
+  userName: string;
+  body: string;
+  createdAt: string;
+}
+
+/** What members see of each other: enough for Immich's <UserAvatar>, never the email address. */
+export interface ChatMember {
+  id: string;
+  name: string;
+  avatarColor: UserAvatarColor;
+  profileImagePath: string;
+  profileChangedAt: string;
+}
+
+export interface ChatState {
+  messages: ChatMessage[];
+  deleted: number[];
+  online: ChatMember[];
+  muted: boolean;
+  now: string;
+}
+
+export const getChat = (params: { after?: number; since?: string } = {}) => {
+  const query = new URLSearchParams();
+  if (params.after !== undefined) {
+    query.set('after', String(params.after));
+  }
+  if (params.since) {
+    query.set('since', params.since);
+  }
+  const qs = query.toString();
+  return hubFetch<ChatState>(`/chat${qs ? `?${qs}` : ''}`);
+};
+
+export const postChatMessage = (body: string) =>
+  hubFetch<ChatMessage>('/chat', { method: 'POST', body: JSON.stringify({ body }) });
+
+export const deleteChatMessage = (id: number) => hubFetch<void>(`/chat/${id}`, { method: 'DELETE' });
+
+export const muteChatMember = (userId: string, name: string, reason = '') =>
+  hubFetch<unknown>(`/chat/mutes/${encodeURIComponent(userId)}`, {
+    method: 'PUT',
+    body: JSON.stringify({ userName: name, reason }),
+  });
+
+export interface ChatMute {
+  userId: string;
+  userName: string;
+  mutedAt: string;
+  mutedBy: string;
+  reason: string;
+}
+
+export const getChatMutes = () => hubFetch<ChatMute[]>('/chat/mutes');
+
+export const unmuteChatMember = (userId: string) =>
+  hubFetch<void>(`/chat/mutes/${encodeURIComponent(userId)}`, { method: 'DELETE' });
