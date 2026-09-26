@@ -42,6 +42,7 @@
   import { get } from 'svelte/store';
   import '../app.css';
   import { installBranding, pageTitle } from '$lib/hmm/branding';
+  import HmmBanners from '$lib/hmm/HmmBanners.svelte';
 
   interface Props {
     children?: Snippet;
@@ -264,6 +265,8 @@
   {:else}
     {@render children?.()}
   {/if}
+
+  <HmmBanners />
 
   {#if showNavigationLoadingBar}
     <NavigationLoadingBar />

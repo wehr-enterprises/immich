@@ -12,6 +12,7 @@ export const SOURCE_URL = 'https://github.com/wehr-enterprises/immich/tree/hmm16
 /** Pages added by the White Knights fork. The hub's API is under /hub/api (a separate service). */
 export const HmmRoute = {
   home: () => '/hub/home',
+  adminAnnouncements: () => '/hub/admin/announcements',
 };
 
 export const hmmLogos: LogoSet = {

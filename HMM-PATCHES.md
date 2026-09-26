@@ -18,7 +18,7 @@ mobile app are stock upstream. Keep it that way: then upgrading only means rebas
 |---|---|---|
 | `web/src/app.css` | `@import './lib/hmm/theme.css'` after the Immich theme (colors, Oswald) | 1 |
 | `web/src/app.html` | Loading screen shows the crest (`/hmm-crest.png`) with a pulse instead of the spinning Immich logo | 1 |
-| `web/src/routes/+layout.svelte` | `installBranding()` (swaps all `<Logo>`s); page title suffix "- White Knights" | 1 |
+| `web/src/routes/+layout.svelte` | `installBranding()` (swaps all `<Logo>`s); page title suffix "- White Knights"; `<HmmBanners />` after the page content | 1, 2 |
 | `web/src/routes/+page.ts`, `+page.svelte` | Visitors get `HmmLanding` instead of a redirect to login; members go to `/hub/home` | 1 |
 | `web/src/routes/auth/login/+page.ts` | After sign-in, default destination is `/hub/home` instead of `/photos` | 1 |
 | `web/src/lib/components/layouts/AuthPageLayout.svelte` | Blurred backdrop behind the login card is the crest | 1 |
