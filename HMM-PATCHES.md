@@ -22,7 +22,9 @@ mobile app are stock upstream. Keep it that way: then upgrading only means rebas
 | `web/src/routes/+page.ts`, `+page.svelte` | Visitors get `HmmLanding` instead of a redirect to login; members go to `/hub/home` | 1 |
 | `web/src/routes/auth/login/+page.ts` | After sign-in, default destination is `/hub/home` instead of `/photos` | 1 |
 | `web/src/lib/components/layouts/AuthPageLayout.svelte` | Blurred backdrop behind the login card is the crest | 1 |
-| `web/src/lib/components/shared-components/side-bar/UserSidebar.svelte` | `<HmmSidebarLinks />` at the top of the sidebar | 1 |
+| `web/src/lib/components/shared-components/side-bar/UserSidebar.svelte` | `<HmmSidebarLinks />` at the top of the sidebar; "Shared links" item hidden (`SHARED_LINKS_ALLOWED`) | 1, 4 |
+| `web/src/lib/modals/SharedLinkCreateModal.svelte` | Shows `HmmNoSharedLinks` instead of the form: no anonymous access (site rule) | 4 |
+| `web/src/lib/stores/notification-manager.svelte.ts` | `withoutAlbumNotices()`: album invite/update notices are hidden and deleted | 4 |
 | `web/static/` favicons, `apple-icon-180.png`, `manifest-icon-*.png`, `manifest.json` | Replaced with squadron icons and name | 1 |
 
 On a conflict in the icons, keep ours and regenerate them: `uv run hmm/branding/make_branding.py`

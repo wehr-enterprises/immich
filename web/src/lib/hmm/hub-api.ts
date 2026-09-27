@@ -155,3 +155,59 @@ export const getChatMutes = () => hubFetch<ChatMute[]>('/chat/mutes');
 
 export const unmuteChatMember = (userId: string) =>
   hubFetch<void>(`/chat/mutes/${encodeURIComponent(userId)}`, { method: 'DELETE' });
+
+// Message board (phase 4)
+
+export interface BoardPost {
+  id: number;
+  parentId: number | null;
+  /** Immich user id; null for authors from the old website who have no account. */
+  userId: string | null;
+  authorName: string;
+  body: string;
+  createdAt: string;
+  editedAt: string | null;
+  deleted: boolean;
+  /** Copied from the WordPress message board. */
+  imported: boolean;
+  /** A comment on a photo, mirrored from Immich: can't be edited; removing it removes the comment. */
+  photoComment: boolean;
+}
+
+export interface BoardPhoto {
+  assetId: string;
+  albumId: string;
+  albumName: string;
+}
+
+export interface BoardThread extends BoardPost {
+  replies: BoardPost[];
+  /** Set when the thread holds a photo's comments; the thread's own post then has no author/text. */
+  photo: BoardPhoto | null;
+}
+
+export interface BoardPage {
+  threads: BoardThread[];
+  total: number;
+}
+
+export const getBoard = (offset = 0, limit = 20) => hubFetch<BoardPage>(`/board?offset=${offset}&limit=${limit}`);
+
+export const createBoardPost = (body: string, parentId?: number) =>
+  hubFetch<BoardPost>('/board', { method: 'POST', body: JSON.stringify({ body, parentId: parentId ?? null }) });
+
+export const editBoardPost = (id: number, body: string) =>
+  hubFetch<BoardPost>(`/board/${id}`, { method: 'PATCH', body: JSON.stringify({ body }) });
+
+export const deleteBoardPost = (id: number) => hubFetch<void>(`/board/${id}`, { method: 'DELETE' });
+
+// Site rule: every album is shared with every member
+
+export interface PublishedAlbum {
+  albumId: string;
+  albumName: string;
+  added: number;
+}
+
+export const publishMyAlbums = () =>
+  hubFetch<{ shared: PublishedAlbum[]; skipped?: string }>('/albums/publish', { method: 'POST' });

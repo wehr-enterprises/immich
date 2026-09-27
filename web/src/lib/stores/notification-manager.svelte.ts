@@ -1,6 +1,13 @@
-import { getNotifications, updateNotification, updateNotifications, type NotificationDto } from '@immich/sdk';
+import {
+  deleteNotifications,
+  getNotifications,
+  updateNotification,
+  updateNotifications,
+  type NotificationDto,
+} from '@immich/sdk';
 import { t } from 'svelte-i18n';
 import { get } from 'svelte/store';
+import { withoutAlbumNotices } from '$lib/hmm/rules';
 import { eventManager } from '$lib/managers/event-manager.svelte';
 import { handleError } from '$lib/utils/handle-error';
 
@@ -16,7 +23,10 @@ class NotificationStore {
 
   async refresh() {
     try {
-      this.notifications = await getNotifications({ unread: true });
+      // HMM-165: no album invitation/update notices (every album is shared with everyone)
+      this.notifications = withoutAlbumNotices(await getNotifications({ unread: true }), (ids) =>
+        deleteNotifications({ notificationDeleteAllDto: { ids } }),
+      );
     } catch (error) {
       const translate = get(t);
       handleError(error, translate('errors.failed_to_load_notifications'));

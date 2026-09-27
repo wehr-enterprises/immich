@@ -1,5 +1,7 @@
 <script lang="ts">
   import SharedLinkFormFields from '$lib/components/SharedLinkFormFields.svelte';
+  import HmmNoSharedLinks from '$lib/hmm/HmmNoSharedLinks.svelte';
+  import { SHARED_LINKS_ALLOWED } from '$lib/hmm/rules';
   import { handleCreateSharedLink } from '$lib/services/shared-link.service';
   import { SharedLinkType } from '@immich/sdk';
   import { FormModal } from '@immich/ui';
@@ -43,29 +45,34 @@
   };
 </script>
 
-<FormModal
-  title={$t('create_link_to_share')}
-  icon={mdiLink}
-  size="small"
-  {onClose}
-  {onSubmit}
-  submitText={$t('create_link')}
->
-  {#if type === SharedLinkType.Album}
-    <div>{$t('album_with_link_access')}</div>
-  {/if}
+<!-- HMM-165: no anonymous access, so no shared links -->
+{#if !SHARED_LINKS_ALLOWED}
+  <HmmNoSharedLinks {onClose} />
+{:else}
+  <FormModal
+    title={$t('create_link_to_share')}
+    icon={mdiLink}
+    size="small"
+    {onClose}
+    {onSubmit}
+    submitText={$t('create_link')}
+  >
+    {#if type === SharedLinkType.Album}
+      <div>{$t('album_with_link_access')}</div>
+    {/if}
 
-  {#if type === SharedLinkType.Individual}
-    <div>{$t('create_link_to_share_description')}</div>
-  {/if}
+    {#if type === SharedLinkType.Individual}
+      <div>{$t('create_link_to_share_description')}</div>
+    {/if}
 
-  <SharedLinkFormFields
-    bind:slug
-    bind:password
-    bind:description
-    bind:allowDownload
-    bind:allowUpload
-    bind:showMetadata
-    bind:expiresAt
-  />
-</FormModal>
+    <SharedLinkFormFields
+      bind:slug
+      bind:password
+      bind:description
+      bind:allowDownload
+      bind:allowUpload
+      bind:showMetadata
+      bind:expiresAt
+    />
+  </FormModal>
+{/if}

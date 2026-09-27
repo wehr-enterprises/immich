@@ -292,11 +292,11 @@
     {/if}
   {:else}
     <!-- Desktop: a drawer docked to the bottom edge, like Facebook's chat. It stays clear of the
-         timeline scrubber on the right and of the sidebar (storage meter) on the left. -->
+         timeline scrubber and the album like/comment buttons on the right, and of the sidebar (storage meter) on the left. -->
     <section
       id="hmm-chat-panel"
       aria-label="Squadron chat"
-      class="fixed inset-e-20 bottom-0 z-50 flex w-80 flex-col overflow-hidden rounded-t-xl border border-b-0 bg-light shadow-[0_-4px_24px_rgba(0,0,0,0.18)]"
+      class="fixed inset-e-40 bottom-0 z-50 flex w-80 flex-col overflow-hidden rounded-t-xl border border-b-0 bg-light shadow-[0_-4px_24px_rgba(0,0,0,0.18)]"
     >
       <header class="flex items-center bg-primary text-light">
         <button
